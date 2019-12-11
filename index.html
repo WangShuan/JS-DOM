@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DOM</title>
+    <script src="./fn.js"></script>
+    <style>
+        h3 {
+            color: red;
+        }
+
+        .mydiv {
+            width: 100px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            border: 1px solid teal;
+            margin: 10px;
+        }
+
+        #menu {
+            margin: 0;
+            padding: 0;
+        }
+
+        #menu>ul {
+            width: 400px;
+            height: 30px;
+            margin: 30px;
+            background: gray;
+            padding: 0;
+        }
+
+        #menu>ul>li {
+            list-style: none;
+            float: left;
+            width: 100px;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        li a {
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+
+        .active {
+            background: red;
+        }
+
+        .content>.active {
+            background-color: rgb(51, 47, 43);
+        }
+
+        li .content {
+            width: 100px;
+            background: teal;
+            display: none;
+        }
+
+        b {
+            color: blueviolet;
+        }
+    </style>
+</head>
+
+<body>
+    <h3>DOM 節點</h3>
+    有一個div 有class 有內容<br>
+    元素節點：div <br>
+    屬性節點：class <br>
+    文本節點：內容 <br>
+    <div class="mydiv">我是內容</div>
+
+    <h3>封裝 getElementsByClassName</h3>
+    函數名叫 getC() 傳入兩個參數 <br>
+    參數一是要找的 className 參數二是標籤名<br><br>
+    <div class="box box2 box3">你好1</div>
+    <div class="box box1 box">你好2</div>
+    <div class="box1 box2 box3">你好3</div>
+    <div class="box box2">你好4</div>
+    <div class="box box1 box3">你好5</div>
+    <script>
+        var aDiv = getC('box3', 'div')
+        // var aDiv = document.getElementsByClassName('box')
+        for (i = 0; i < aDiv.length; i++) {
+            aDiv[i].style.color = 'green'
+        }
+
+        function getC(className, tag) { // 傳入樣式名稱與標籤名
+            var aEl = document.getElementsByTagName(tag) // 獲取所有傳入的標籤
+            var arr = [] // 定義一個空數組存放最後返回的帶有傳入樣式的標籤
+
+            for (j = 0; j < aEl.length; j++) { // 遍歷所有標籤
+
+                // 創建一個變量 存放每個標籤的所有樣式名稱
+                var Names = aEl[j].className
+                // 並以空格作為分割符存成數組
+                Names = Names.split(' ')
+
+                // 遍歷每個標籤的樣式名稱
+                for (k = 0; k < Names.length; k++) {
+                    if (Names[k] == className) { // 如果樣式名跟要找的樣式名一樣
+                        arr.push(aEl[j]) // 就往arr添加此標籤
+
+                        // 這是防止某標籤裡面有相同的樣式名稱 導致重複往 arr 添加此標籤
+                        break
+                    }
+                }
+            }
+            return arr // 返回其結果就是 document.getElementsByClassName
+        }
+    </script>
+
+    <h3>小案例：下拉菜單</h3>
+    鼠標移入添加樣式，移出刪除樣式。
+    <div id="menu">
+        <ul>
+            <li>
+                <a href="#" class="title">首頁</a>
+                <div class="content">
+                    <a href="#">首頁1</a>
+                    <a href="#">首頁2</a>
+                    <a href="#">首頁3</a>
+                    <a href="#">首頁4</a>
+                    <a href="#">首頁5</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" class="title">聯繫</a>
+                <div class="content">
+                    <a href="#">聯繫1</a>
+                    <a href="#">聯繫2</a>
+                    <a href="#">聯繫3</a>
+                    <a href="#">聯繫4</a>
+                    <a href="#">聯繫5</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" class="title">案例</a>
+                <div class="content">
+                    <a href="#">案例1</a>
+                    <a href="#">案例2</a>
+                    <a href="#">案例3</a>
+                    <a href="#">案例4</a>
+                    <a href="#">案例5</a>
+                </div>
+            </li>
+            <li>
+                <a href="#" class="title">關於</a>
+                <div class="content">
+                    <a href="#">關於1</a>
+                    <a href="#">關於2</a>
+                    <a href="#">關於3</a>
+                    <a href="#">關於4</a>
+                    <a href="#">關於5</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        var aLi = document.getElementsByTagName('li')
+        var nowLi = ''
+        var nowContent = ''
+
+        for (i = 0; i < aLi.length; i++) {
+            aLi[i].onmouseover = function () {
+                this.className = 'active'
+                this.nowContent = this.getElementsByTagName('div')[0]
+                this.nowContent.style.display = 'block'
+                this.nowLi = this.nowContent.getElementsByTagName('a')
+                for (j = 0; j < this.nowLi.length; j++) {
+                    this.nowLi[j].onmouseover = function () {
+                        this.className = 'active'
+                    }
+                }
+            }
+            aLi[i].onmouseout = function () {
+                this.className = ''
+                this.nowContent = this.getElementsByTagName('div')[0]
+                this.nowContent.style.display = 'none'
+                this.nowLi = this.nowContent.getElementsByTagName('a')
+                for (j = 0; j < this.nowLi.length; j++) {
+                    this.nowLi[j].onmouseout = function () {
+                        this.className = ''
+                    }
+                }
+            }
+        }
+    </script>
+
+    <h3 style="margin-top: 170px;">節點屬性：nodeName/nodeType/nodeValue</h3>
+    nodeName：節點名稱的值為元素名或屬性名<br>
+    nodeType：節點類型的值為1.2.3 (1:元素節點 2:屬性節點 3:文本節點) <br>
+    nodeValue：節點內容的值元素節點為null 屬性節點為屬性值 文本節點為文本內容<br>
+    小重點：nodeName如果是元素 得到的結果會全部都是大寫英文字<br>
+    要把英文轉成大寫或小寫使用 toLocaleUpperCase/toLocaleLowerCase 方法<br><br>
+    <div id="box" style="color: teal;">我是內容</div>
+    <script>
+        var oBox = $('box')
+
+        console.log(oBox.nodeName)
+        console.log(oBox.nodeType)
+        console.log(oBox.nodeValue)
+
+        // attributes 是一個數組 裡面包含此元素的所有屬性
+        var att = oBox.attributes[0]
+        console.log(att)
+        console.log(att.nodeName)
+        console.log(att.nodeType)
+        console.log(att.nodeValue)
+    </script>
+
+    <h3>層次節點屬性：父節點/子節點/兄弟節點</h3>
+    childNodes：獲取子節點 在IE中只會獲得a標籤 在非IE中則會連換行一起算進去<br>
+    <div class="mydiv">
+        <a href="#">Link</a>
+    </div>
+    <script>
+        var oDiv = document.getElementsByClassName('mydiv')[1]
+        var son = oDiv.childNodes
+        console.log(son) // text,a,text 
+    </script>
+
+    <h3>innerHTML vs nodeValue 的賦值問題</h3>
+    innerHTML可直接轉換成標籤<br>
+    nodeValue則是將整段當作特殊字符存起來直接顯示<br><br>
+    <div id="test" style="color: peru;">
+
+    </div>
+    <script>
+        var oTest = $('test')
+        oTest.childNodes[0].nodeValue = '<h1>nodeValue</h1>'
+        oTest.innerHTML += '<h1>innerHTML</h1>'
+    </script>
+
+    <h3>各種獲取節點的方法</h3>
+    <div id="view"><a href="#">myLink</a>
+        <p>我是批</p><span>我是司片</span>
+    </div>
+    <script>
+        var oView = $('view')
+        console.log(oView.firstChild.nodeName) // 第一個子節點
+        console.log(oView.lastChild.nodeName) // 最後一個子節點
+        console.log(oView.parentNode.nodeName) // 父節點
+        console.log(oView.lastChild.previousSibling.nodeName) //最後一個的前一個兄弟節點
+        console.log(oView.firstChild.nextSibling.nodeName) // 第一個的下一個兄弟節點
+    </script>
+
+    <h3>attributes 用來獲取當前元素的所有屬性節點</h3>
+    attributes 是一個數組 裡面包含此元素的所有屬性 <br>
+    用法為 var atts = ＸＸＸ.attributes 得到的 atts 是數組
+    <div id="mybox" class="myclass" style="color: purple;"></div>
+    <script>
+        var myBox = $('mybox')
+        var atts = myBox.attributes
+        for (name in atts) {
+            console.log(name) // 由此可知它是一個集合 裡面放了很多種東西
+        }
+
+        // 若要獲取某個屬性節點 就要使用方括號傳入字符串的方式
+        console.log(atts['id'].nodeValue)
+    </script>
+
+    <h3>創建節點的一些常用方法</h3>
+    document.<b>createElement</b>(元素)：創建元素節點 <br>
+    document.<b>createTextNode</b>(文本內容)：創建文本節點 <br>
+    啥元素.<b>appendChild</b>(啥要添加的元素)：添加子元素 <br>
+    <b>insertBefore</b>(添加啥,啥元素前面)：添加在某元素前面 <br>
+    <ul id="view2">
+        <li>1、哈哈</li>
+        <li>2、哈哈</li>
+        <li>3、哈哈</li>
+        <li>4、哈哈</li>
+    </ul>
+    <script>
+        var oTitle = document.createElement('h1') // 創建元素
+        oTitle.innerHTML = '我被添加到body'
+        document.body.appendChild(oTitle)
+
+        var oText = document.createTextNode('<h1>你好</h1>') // 創建文本節點
+        document.body.appendChild(oText)
+
+        // insertBefore 將節點插入到前面
+        var oLi = document.createElement('li');
+        oLi.innerHTML = '測試';
+        var oView = document.getElementById('view2');
+
+        // 在oView前面添加oLi
+        // oView.parentNode.insertBefore(oLi,oView);
+
+        // 在oView的第一個子元素前面添加oLi
+        oView.insertBefore(oLi, oView.firstChild);
+
+        // 在oView的最後添加一個子元素oLi
+        // oView.appendChild(oLi);
+    </script>
+
+    <h3>複製節點 cloneNode</h3>
+    <div id="clone"></div>
+    <script>
+            var oImg = document.createElement('img')
+            oImg.src = './img/shop.png'
+            oImg.style.width='50px'
+            var temp = null
+            for (i = 0; i < 10; i++) {
+                temp = oImg.cloneNode()
+                $('clone').appendChild(temp)
+            }
+    </script>
+</body>
+
+</html>
